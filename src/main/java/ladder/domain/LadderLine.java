@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Objects;
 
 public final class LadderLine {
+    private static final String CONTINUOUS_ERROR_MESSAGE = "연속된 체크는 오직 2번만 가능합니다.";
+
+    // TODO: 네이밍
     private final List<Boolean> points;
 
     public LadderLine(final List<Boolean> points) {
@@ -13,31 +16,18 @@ public final class LadderLine {
     }
 
     private void validate(final List<Boolean> points) {
-        // 0 -> true, false 가능
-        // 1 -> true만 가능
-        // 2 -> false만 가능
+        Checkable checkable = Checkable.FREE;
 
-        int status = 0;
+        for (final boolean point : points) {
+            validateContinuous(checkable, point);
 
-        for (boolean point : points) {
-            switch (status) {
-                case 1:
-                    if (!point) {
-                        throw new IllegalArgumentException();
-                    }
-                    status = 2;
-                    break;
-                case 2:
-                    if (point) {
-                        throw new IllegalArgumentException();
-                    }
-                    status = 0;
-                    break;
-                default:
-                    if (point) {
-                        status = 1;
-                    }
-            }
+            checkable = checkable.next(point);
+        }
+    }
+
+    private void validateContinuous(final Checkable checkable, final boolean point) {
+        if (!checkable.checkable(point)) {
+            throw new IllegalArgumentException(CONTINUOUS_ERROR_MESSAGE);
         }
     }
 
