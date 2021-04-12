@@ -18,6 +18,10 @@ public enum Checkable {
         this.shouldNext = shouldNext;
     }
 
+    public boolean checkableTrue() {
+        return checkable(true);
+    }
+
     public boolean checkable(final boolean point) {
         return checkable.test(point);
     }
